@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+  </head>
+  <body>
+    <div style="position:relative;width:1024px;height:800px">
+      <div id="map" style="position:absolute;left:0;top:0;width:75%; height:100%"></div>
+      <div id="lateral" style="position:absolute;right:0;top:0;width:25%; height:100%"></div>
+    </div>
+
+    <script type="text/javascript">
+      // variável que coleta o html que será adicionado ao mapa
+      var lateral_html = "";
+
+      // array que grava os marcadores e o html usado pela lateral
+      var gmarkers = [];
+
+      var infoWnd = new google.maps.InfoWindow();
+
+      // função que cria o marcador e seta a janela de evento
+      function createMarker(point, name, html) {
+        var marker = new google.maps.Marker({
+          position : point
+        });
+        google.maps.event.addListener(marker, "click", function() {
+          infoWnd.setContent(html);
+          infoWnd.open(marker.getMap(), marker);
+        });
+        // salva a informação para ser usada posteriormente pela lateral
+        gmarkers.push(marker);
+        // adiciona ítem na lateral
+        lateral_html += '<a href="javascript:myclick(' + (gmarkers.length - 1) + ')">' + name + '<\/a><br>';
+        return marker;
+      }
+
+      // função que reconhece o click e abre a janela de evento no mapa
+      function myclick(i) {
+        google.maps.event.trigger(gmarkers[i], "click");
+      }
+
+      // cria o mapa
+      var map;
+      function initialize() {
+        var mapOptions = {
+          zoom : 12,
+          center : new google.maps.LatLng(-30.040094965589486, -51.18475854999997),
+          mapTypeId : google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        // adiciona os lugares e as informações desejadas
+        var point = new google.maps.LatLng(-30.040094965589486, -51.18475854999997);
+        var marker = createMarker(point, "Petrópolis", "<h1>...</h1>....................................<br>....................................");
+        marker.setMap(map);
+
+        var point = new google.maps.LatLng(-30.033240414508487, -51.170274621319535);
+        var marker = createMarker(point, "Três Figueiras", "<h1>...</h1>................................................<br>....................................");
+        marker.setMap(map);
+
+        var point = new google.maps.LatLng(-30.03121553769872, -51.18591726429439);
+        var marker = createMarker(point, "Auxiliadora", "<h1>...</h1>................................<br>....................................");
+        marker.setMap(map);
+
+        // coloca o conteudo na lateral_html
+        document.getElementById("lateral").innerHTML = lateral_html;
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </body>
+</html>
